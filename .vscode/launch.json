@@ -10,8 +10,10 @@
           ],
           "program": "${workspaceFolder}/bin/dev",
           "args": [
-            "hello",
-            "world",
+            "run",
+            "printenv",
+            "-s ${workspaceFolder}/test/async.js",
+            "-e ${workspaceFolder}/test/.test.env"
           ],
       }
   ]
