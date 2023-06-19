@@ -109,4 +109,3 @@ Output file `.new-file.env`:
 MY_SECRET: "abc123"
 ```
 Because we ran "printenv" the current environment variables get printed to the terminal.
-
