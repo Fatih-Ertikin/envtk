@@ -4,7 +4,7 @@
   "description": "CLI tool to asynchronously set environment variables before building a project.",
   "author": "Fatih Ertikin",
   "bin": {
-    "envtk": "./bin/run.js"
+    "envtk": "./bin/run"
   },
   "homepage": "https://github.com/Development/envtk",
   "license": "MIT",
