@@ -1,6 +1,6 @@
 {
   "name": "yaet",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "CLI tool to asynchronously set environment variables before building a project.",
   "author": "Fatih Ertikin",
   "bin": {
