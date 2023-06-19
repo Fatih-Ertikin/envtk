@@ -42,15 +42,11 @@ export default class Run extends BaseCommand<typeof Run> {
       )
     }
 
-    if (flags.script) {
-      await this.executeAction('Executing user script', () => this.loadUserScriptValues(flags.script))
-    }
+    await this.executeAction('Executing user script', () => this.loadUserScriptValues(flags.script))
 
-    const envObj = Object.fromEntries(this.environment) as Record<string, any> // create object from map because exec expects an object
+    const envObj = Object.fromEntries(this.environment) as Record<string, any> // create object from map because exec doesn't work with maps
 
-    if (args[CMD_ARG]) {
-      await this.executeAction('Run specified command', () => execSync(USER_COMMAND, {env: envObj, stdio: 'inherit'}))
-    }
+    await this.executeAction('Run specified command', () => execSync(USER_COMMAND, {env: envObj, stdio: 'inherit'}))
 
     if (flags.json) {
       return envObj

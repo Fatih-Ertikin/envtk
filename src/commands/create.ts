@@ -39,9 +39,7 @@ export default class Create extends BaseCommand<typeof Create> {
       )
     }
 
-    if (flags.script) {
-      await this.executeAction('Executing user script', () => this.loadUserScriptValues(flags.script))
-    }
+    await this.executeAction('Executing user script', () => this.loadUserScriptValues(flags.script))
 
     const envObj = Object.fromEntries(this.environment) // create object because createEnvFile doesn't work with maps
 
