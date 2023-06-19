@@ -2,7 +2,7 @@ import {Args} from '@oclif/core'
 import {config} from 'dotenv'
 
 import {existsSync} from 'node:fs'
-import {spawn} from 'node:child_process'
+import {execSync} from 'node:child_process'
 import {getAbsolutePath, runUserScript} from '../lib/file-utils'
 import {parseEnv, deepCopy} from '../lib/env'
 import {BaseCommand} from '../lib/base-command'
@@ -102,7 +102,7 @@ export default class Run extends BaseCommand<typeof Run> {
     }
 
     const runUserCommand = () => {
-      spawn(COMMAND, {env: ENVIRONMENT, stdio: 'inherit'})
+      execSync(COMMAND, {env: ENVIRONMENT, stdio: 'inherit'})
     }
 
     if (args[CMD_ARG] && !flags.json) {
