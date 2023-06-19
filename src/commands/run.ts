@@ -18,11 +18,11 @@ export default class Run extends BaseCommand<typeof Run> {
 
   static examples = [
     {
-      command: 'yaet run "npm run dev" -s ./load-env.js',
+      command: 'envtk run "npm run dev" -s ./load-env.js',
       description: 'Run command with env variables returned from script',
     },
     {
-      command: 'yaet run "npm run dev" -s ./load-env.js -e .env',
+      command: 'envtk run "npm run dev" -s ./load-env.js -e .env',
       description:
         ' Run command with env variables returned from script and include defaults from ".env"',
     },

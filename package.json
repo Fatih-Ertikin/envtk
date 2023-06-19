@@ -1,15 +1,15 @@
 {
-  "name": "yaet",
+  "name": "envtk",
   "version": "1.0.0",
   "description": "CLI tool to asynchronously set environment variables before building a project.",
   "author": "Fatih Ertikin",
   "bin": {
-    "yaet": "./bin/run.js"
+    "envtk": "./bin/run.js"
   },
-  "homepage": "https://github.com/Development/yaet",
+  "homepage": "https://github.com/Development/envtk",
   "license": "MIT",
   "main": "dist/index.js",
-  "repository": "Development/yaet",
+  "repository": "Development/envtk",
   "files": [
     "/bin",
     "/dist",
@@ -50,8 +50,8 @@
     "typescript": "^4.9.5"
   },
   "oclif": {
-    "bin": "yaet",
-    "dirname": "yaet",
+    "bin": "envtk",
+    "dirname": "envtk",
     "commands": "./dist/commands",
     "plugins": [
       "@oclif/plugin-help",
@@ -70,7 +70,7 @@
   "engines": {
     "node": ">=12.0.0"
   },
-  "bugs": "https://github.com/Development/yaet/issues",
+  "bugs": "https://github.com/Development/envtk/issues",
   "keywords": [
     "oclif"
   ],
