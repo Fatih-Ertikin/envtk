@@ -24,7 +24,7 @@
     "chalk": "^5.2.0",
     "chalk-animation": "^2.0.3",
     "change-case": "^4.1.2",
-    "dotenv": "^16.2.0",
+    "dotenv": "^16.3.1",
     "figlet": "^1.6.0",
     "gradient-string": "^2.0.2",
     "nanospinner": "^1.1.0"
