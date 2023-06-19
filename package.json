@@ -30,7 +30,7 @@
     "nanospinner": "^1.1.0"
   },
   "devDependencies": {
-    "@oclif/test": "^2.3.22",
+    "@oclif/test": "^2.3.23",
     "@types/chai": "^4",
     "@types/figlet": "^1.5.6",
     "@types/gradient-string": "^1.1.2",
