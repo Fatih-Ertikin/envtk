@@ -1,15 +1,15 @@
 {
-  "name": "async-env",
+  "name": "yaet",
   "version": "0.1.0",
   "description": "CLI tool to asynchronously set environment variables before building a project.",
   "author": "Fatih Ertikin",
   "bin": {
-    "async-env": "./bin/run.js"
+    "yaet": "./bin/run.js"
   },
-  "homepage": "https://github.com/Development/async-env",
+  "homepage": "https://github.com/Development/yaet",
   "license": "MIT",
   "main": "dist/index.js",
-  "repository": "Development/async-env",
+  "repository": "Development/yaet",
   "files": [
     "/bin",
     "/dist",
@@ -50,8 +50,8 @@
     "typescript": "^4.9.5"
   },
   "oclif": {
-    "bin": "async-env",
-    "dirname": "async-env",
+    "bin": "yaet",
+    "dirname": "yaet",
     "commands": "./dist/commands",
     "plugins": [
       "@oclif/plugin-help",
@@ -70,7 +70,7 @@
   "engines": {
     "node": ">=12.0.0"
   },
-  "bugs": "https://github.com/Development/async-env/issues",
+  "bugs": "https://github.com/Development/yaet/issues",
   "keywords": [
     "oclif"
   ],

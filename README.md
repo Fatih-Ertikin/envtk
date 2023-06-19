@@ -15,22 +15,22 @@ CLI tool to asynchronously load environment variables from a script and:
 
 ## Installation
 
-Install async-env with npm:
+Install yaet with npm:
 
 ```bash
-  $ npm install -g async-env
+  $ npm install -g yaet
 ```  
 ## Quickstart
 
 running a command with environment variables from a script:
 ```bash
-  $ async-env run printenv --script=myScript.js
+  $ yaet run printenv --script=myScript.js
   ENV_VALUE_FROM_SCRIPT="abc123"
 ```
 
 creating a new .env file with environment variables from a script:
 ```bash
-  $ async-env create ".new.env" --script=myScript.js
+  $ yaet create ".new.env" --script=myScript.js
 ```  
 `.new.env`:
 ```
@@ -47,7 +47,7 @@ I noticed that a lot of populair frameworks, infrastructure tooling or other 3rd
 
 While tooling like [dotenv-vault](https://www.dotenv.org/docs/quickstart) provides alot of functionality for safely managing secrets/environment variables, not everyone uses or can use dotenv-vault. This project aims to be a simple alternative tool for retrieving your secrets from wherever: a 3rd pary API, encrypted database, whatever and then passing those variables to the next step in your startup/deploy pipeline.
 ## Usage/Examples
-async-env has 2 commands:
+yaet has 2 commands:
 - run <- runs a command with the new environment variables
 - create <- creates a new .env file with the new environment variables
 
@@ -71,7 +71,7 @@ module.exports = getSomethingFromApi // <- default export the function
 ```
 Then in the terminal execute the `run` command:
 ```bash
-$ async-env run printenv -s ./my-script.js # <- use script flag (-s/--script)
+$ yaet run printenv -s ./my-script.js # <- use script flag (-s/--script)
 ```
 
 Output:
@@ -101,7 +101,7 @@ module.exports = getSomethingFromApi // <- default export the function
 ```
 Then in the terminal run the `create` command:
 ```bash
-$ async-env create ./.new-file.env -s ./my-script.js 
+$ yaet create ./.new-file.env -s ./my-script.js 
 ```
 
 Output file `.new-file.env`:
