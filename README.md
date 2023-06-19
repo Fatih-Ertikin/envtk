@@ -1,335 +1,112 @@
-oclif-hello-world
-=================
 
-oclif example Hello World CLI
-
+# Async env
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![CircleCI](https://circleci.com/gh/oclif/hello-world/tree/main.svg?style=shield)](https://circleci.com/gh/oclif/hello-world/tree/main)
 [![GitHub license](https://img.shields.io/github/license/oclif/hello-world)](https://github.com/oclif/hello-world/blob/main/LICENSE)
 
-<!-- toc -->
-* [Usage](#usage)
-* [Commands](#commands)
-<!-- tocstop -->
-# Usage
-<!-- usage -->
-```sh-session
-$ npm install -g async-env
-$ async-env COMMAND
-running command...
-$ async-env (--version)
-async-env/0.0.0 linux-x64 node-v18.16.0
-$ async-env --help [COMMAND]
-USAGE
-  $ async-env COMMAND
-...
-```
-<!-- usagestop -->
-# Commands
-<!-- commands -->
-* [`async-env hello PERSON`](#async-env-hello-person)
-* [`async-env hello world`](#async-env-hello-world)
-* [`async-env help [COMMANDS]`](#async-env-help-commands)
-* [`async-env plugins`](#async-env-plugins)
-* [`async-env plugins:install PLUGIN...`](#async-env-pluginsinstall-plugin)
-* [`async-env plugins:inspect PLUGIN...`](#async-env-pluginsinspect-plugin)
-* [`async-env plugins:install PLUGIN...`](#async-env-pluginsinstall-plugin-1)
-* [`async-env plugins:link PLUGIN`](#async-env-pluginslink-plugin)
-* [`async-env plugins:uninstall PLUGIN...`](#async-env-pluginsuninstall-plugin)
-* [`async-env plugins:uninstall PLUGIN...`](#async-env-pluginsuninstall-plugin-1)
-* [`async-env plugins:uninstall PLUGIN...`](#async-env-pluginsuninstall-plugin-2)
-* [`async-env plugins update`](#async-env-plugins-update)
 
-## `async-env hello PERSON`
+CLI tool to asynchronously load environment variables from a script and:
+- run another command with those variables as environment (for example starting a node project)
+- output the resulting environment variables as a new .env file
+- use existing .env files to load defaults into a user script
+- output the result as JSON in the terminal
 
-Say hello
 
-```
-USAGE
-  $ async-env hello PERSON -f <value>
 
-ARGUMENTS
-  PERSON  Person to say hello to
 
-FLAGS
-  -f, --from=<value>  (required) Who is saying hello
+## Installation
 
-DESCRIPTION
-  Say hello
+Install async-env with npm:
 
-EXAMPLES
-  $ oex hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
+```bash
+  $ npm install -g async-env
+```  
+## Quickstart
+
+running a command with environment variables from a script:
+```bash
+  $ async-env run printenv --script=myScript.js
+  ENV_VALUE_FROM_SCRIPT="abc123"
 ```
 
-_See code: [dist/commands/hello/index.ts](https://github.com/Development/async-env/blob/v0.0.0/dist/commands/hello/index.ts)_
-
-## `async-env hello world`
-
-Say hello world
-
+creating a new .env file with environment variables from a script:
+```bash
+  $ async-env create ".new.env" --script=myScript.js
+```  
+`.new.env`:
 ```
-USAGE
-  $ async-env hello world
-
-DESCRIPTION
-  Say hello world
-
-EXAMPLES
-  $ async-env hello world
-  hello world! (./src/commands/hello/world.ts)
+ENV_VALUE_FROM_SCRIPT="abc123"
 ```
+## Table of contents
+* [Motives](#Motives)
+* [Usage/examples](#Usage/Examples)
 
-## `async-env help [COMMANDS]`
 
-Display help for async-env.
+## Motives
 
+I noticed that a lot of populair frameworks, infrastructure tooling or other 3rd party services make use of environment variables or .env files but provide no way to load them from a 3rd pary secret manager (for example [AWS Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html)).
+
+While tooling like [dotenv-vault](https://www.dotenv.org/docs/quickstart) provides alot of functionality for safely managing secrets/environment variables, not everyone uses or can use dotenv-vault. This project aims to be a simple alternative tool for retrieving your secrets from wherever: a 3rd pary API, encrypted database, whatever and then passing those variables to the next step in your startup/deploy pipeline.
+## Usage/Examples
+async-env has 2 commands:
+- run <- runs a command with the new environment variables
+- create <- creates a new .env file with the new environment variables
+
+### Using a script to (asynchronously) retrieve and set new environment variables:
+Create javascript file `my-script.js`:
+```javascript
+
+// function to get env vars from a 3rd party api
+const getSomethingFromApi = async () => ({
+    value: "abc123"
+});
+
+async function getSomethingFromApi() {  
+    const secrets = await getSomethingFromApi();
+   
+    return {
+        MY_SECRET: secrets.value 
+    };
+}
+module.exports = getSomethingFromApi // <- default export the function
 ```
-USAGE
-  $ async-env help [COMMANDS] [-n]
-
-ARGUMENTS
-  COMMANDS  Command to show help for.
-
-FLAGS
-  -n, --nested-commands  Include all nested commands in the output.
-
-DESCRIPTION
-  Display help for async-env.
-```
-
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.9/src/commands/help.ts)_
-
-## `async-env plugins`
-
-List installed plugins.
-
-```
-USAGE
-  $ async-env plugins [--core]
-
-FLAGS
-  --core  Show core plugins.
-
-DESCRIPTION
-  List installed plugins.
-
-EXAMPLES
-  $ async-env plugins
+Then in the terminal execute the `run` command:
+```bash
+$ async-env run printenv -s ./my-script.js # <- use script flag (-s/--script)
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/index.ts)_
-
-## `async-env plugins:install PLUGIN...`
-
-Installs a plugin into the CLI.
-
+Output:
 ```
-USAGE
-  $ async-env plugins:install PLUGIN...
+MY_SECRET: "abc123"
+```
+Because we ran "printenv" the current environment variables get printed to the terminal.
+If would for example start a node project, that node project would have access to `process.env.MY_SECRET`
 
-ARGUMENTS
-  PLUGIN  Plugin to install.
+### load env variables from a user script and write to new .env file
+Create javascript file `my-script.js`:
+```javascript
 
-FLAGS
-  -f, --force    Run yarn install with force flag.
-  -h, --help     Show CLI help.
-  -v, --verbose
+// function to get env vars from a 3rd party api
+const getSomethingFromApi = async () => ({
+    value: "abc123"
+});
 
-DESCRIPTION
-  Installs a plugin into the CLI.
-  Can be installed from npm or a git url.
-
-  Installation of a user-installed plugin will override a core plugin.
-
-  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
-  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
-  the CLI without the need to patch and update the whole CLI.
-
-
-ALIASES
-  $ async-env plugins add
-
-EXAMPLES
-  $ async-env plugins:install myplugin 
-
-  $ async-env plugins:install https://github.com/someuser/someplugin
-
-  $ async-env plugins:install someuser/someplugin
+async function getSomethingFromApi() {  
+    const secrets = await getSomethingFromApi();
+   
+    return {
+        MY_SECRET: secrets.value 
+    };
+}
+module.exports = getSomethingFromApi // <- default export the function
+```
+Then in the terminal run the `create` command:
+```bash
+$ async-env create ./.new-file.env -s ./my-script.js 
 ```
 
-## `async-env plugins:inspect PLUGIN...`
-
-Displays installation properties of a plugin.
-
+Output file `.new-file.env`:
 ```
-USAGE
-  $ async-env plugins:inspect PLUGIN...
-
-ARGUMENTS
-  PLUGIN  [default: .] Plugin to inspect.
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  Displays installation properties of a plugin.
-
-EXAMPLES
-  $ async-env plugins:inspect myplugin
+MY_SECRET: "abc123"
 ```
+Because we ran "printenv" the current environment variables get printed to the terminal.
 
-## `async-env plugins:install PLUGIN...`
-
-Installs a plugin into the CLI.
-
-```
-USAGE
-  $ async-env plugins:install PLUGIN...
-
-ARGUMENTS
-  PLUGIN  Plugin to install.
-
-FLAGS
-  -f, --force    Run yarn install with force flag.
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Installs a plugin into the CLI.
-  Can be installed from npm or a git url.
-
-  Installation of a user-installed plugin will override a core plugin.
-
-  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
-  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
-  the CLI without the need to patch and update the whole CLI.
-
-
-ALIASES
-  $ async-env plugins add
-
-EXAMPLES
-  $ async-env plugins:install myplugin 
-
-  $ async-env plugins:install https://github.com/someuser/someplugin
-
-  $ async-env plugins:install someuser/someplugin
-```
-
-## `async-env plugins:link PLUGIN`
-
-Links a plugin into the CLI for development.
-
-```
-USAGE
-  $ async-env plugins:link PLUGIN
-
-ARGUMENTS
-  PATH  [default: .] path to plugin
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Links a plugin into the CLI for development.
-  Installation of a linked plugin will override a user-installed or core plugin.
-
-  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello'
-  command will override the user-installed or core plugin implementation. This is useful for development work.
-
-
-EXAMPLES
-  $ async-env plugins:link myplugin
-```
-
-## `async-env plugins:uninstall PLUGIN...`
-
-Removes a plugin from the CLI.
-
-```
-USAGE
-  $ async-env plugins:uninstall PLUGIN...
-
-ARGUMENTS
-  PLUGIN  plugin to uninstall
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Removes a plugin from the CLI.
-
-ALIASES
-  $ async-env plugins unlink
-  $ async-env plugins remove
-```
-
-## `async-env plugins:uninstall PLUGIN...`
-
-Removes a plugin from the CLI.
-
-```
-USAGE
-  $ async-env plugins:uninstall PLUGIN...
-
-ARGUMENTS
-  PLUGIN  plugin to uninstall
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Removes a plugin from the CLI.
-
-ALIASES
-  $ async-env plugins unlink
-  $ async-env plugins remove
-```
-
-## `async-env plugins:uninstall PLUGIN...`
-
-Removes a plugin from the CLI.
-
-```
-USAGE
-  $ async-env plugins:uninstall PLUGIN...
-
-ARGUMENTS
-  PLUGIN  plugin to uninstall
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Removes a plugin from the CLI.
-
-ALIASES
-  $ async-env plugins unlink
-  $ async-env plugins remove
-```
-
-## `async-env plugins update`
-
-Update installed plugins.
-
-```
-USAGE
-  $ async-env plugins update [-h] [-v]
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Update installed plugins.
-```
-<!-- commandsstop -->
