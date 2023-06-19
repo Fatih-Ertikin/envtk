@@ -1,5 +1,9 @@
 import {Command, Flags, Interfaces} from '@oclif/core'
 import {createSpinner} from 'nanospinner'
+import {getAbsolutePath, runUserScript} from './file-utils'
+import {existsSync} from 'node:fs'
+import {config} from 'dotenv'
+import {parseEnv} from './env'
 
 /** flags */
 const SCRIPT_FLAG = 'script' as const
@@ -18,7 +22,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       char: 's',
       description: 'path to .(mjs|js) script.',
       exists: true,
-      required: false,
+      required: true,
     }),
     [ENV_FILE_FLAG]: Flags.file({
       char: 'e',
@@ -35,6 +39,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
   protected flags!: Flags<T>
   protected args!: Args<T>
+  protected environment!: Map<string, boolean | string | number>;
 
   public async init(): Promise<void> {
     await super.init()
@@ -46,6 +51,9 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     })
     this.flags = flags as Flags<T>
     this.args = args as Args<T>
+    // Initialize environment with a copy of the current process.env
+    const copy = JSON.parse(JSON.stringify(process.env))
+    this.environment = new Map(Object.entries(copy))
   }
 
   public async executeAction(title: string, action: (() => void) | (() => Promise<void>)): Promise<void> {
@@ -71,6 +79,45 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
         mark: '❌',
       })
       throw error
+    }
+  }
+
+  protected loadEnvironmentFile(path: string): void {
+    const envFilePath = getAbsolutePath(path)
+    if (existsSync(envFilePath)) {
+      // parse using dotenv.config
+      // env file will both get returned AND put into current process.env
+      const result = config({
+        path: envFilePath,
+      })
+
+      if (result.error || !result.parsed) {
+        this.error(`Failed to parse input .env: ${result.error}`, {
+          exit: 1,
+        })
+      }
+
+      // add result to environment map
+      for (const [key, value] of Object.entries(result.parsed)) {
+        this.environment.set(key, value)
+      }
+    } else {
+      throw new Error(`Could not find .env file at ${envFilePath}`)
+    }
+  }
+
+  protected async loadUserScriptValues(path: string): Promise<void> {
+    // run user script with current env vars
+    const content = await runUserScript(path, this.environment)
+
+    // parse script result:
+    // 1. All keys become CONSTANT_CASE
+    // 2. Every key whose value is not a string, boolean or number gets removed
+    const parsedContent = parseEnv(content)
+
+    // add result to environment map
+    for (const [key, value] of Object.entries(parsedContent)) {
+      this.environment.set(key, value)
     }
   }
 }

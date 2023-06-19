@@ -1,10 +1,5 @@
 import {Args} from '@oclif/core'
-import {config} from 'dotenv'
-
-import {existsSync} from 'node:fs'
 import {execSync} from 'node:child_process'
-import {getAbsolutePath, runUserScript} from '../lib/file-utils'
-import {parseEnv, deepCopy} from '../lib/env'
 import {BaseCommand} from '../lib/base-command'
 
 /** arguments */
@@ -36,81 +31,28 @@ export default class Run extends BaseCommand<typeof Run> {
     }),
   };
 
-  public async run(): Promise<void> {
+  public async run(): Promise<any> {
     const {args, flags} = await this.parse(Run)
 
-    const COMMAND = args[CMD_ARG] // Command the user wants to run
-    let ENVIRONMENT = deepCopy(process.env) // Current environment vars
+    const USER_COMMAND = args[CMD_ARG] // Command the user wants to run
 
-    if (!flags.envFile && !flags.script) {
-      this.warn(
-        'No flags given. command will still be executed but no new environment variables will be loaded (current process.env will be used).',
+    if (flags.envFile) {
+      await this.executeAction('Reading user specified env file', () =>
+        this.loadEnvironmentFile(flags.envFile!),
       )
     }
 
-    const loadEnvFile = () => {
-      if (!flags.envFile) {
-        throw new Error('tried to load env file without flag present, this error should not occur!')
-      }
-
-      const envFilePath = getAbsolutePath(flags.envFile)
-      if (existsSync(envFilePath)) {
-        // parse using dotenv.config
-        const parseResult = config({
-          path: envFilePath,
-        })
-
-        if (parseResult.error || !parseResult.parsed) {
-          this.error(`Failed to parse input .env: ${parseResult.error}`, {
-            exit: 1,
-          })
-        }
-
-        // add parsed env vars to current environment
-        const defaults = parseEnv(parseResult.parsed)
-        ENVIRONMENT = deepCopy({
-          ...ENVIRONMENT,
-          ...defaults,
-        })
-      }
-    }
-
-    if (flags.envFile) {
-      await this.executeAction('Reading user specified env file', loadEnvFile)
-    }
-
-    const loadUserScript = async () => {
-      if (!flags.script) {
-        throw new Error('tried to run user script without flag present, this error should not occur!')
-      }
-
-      // run user script with env vars
-      const content = await runUserScript(flags.script, ENVIRONMENT)
-
-      // parse user content
-      const parsedContent = parseEnv(content)
-
-      // add content to env vars
-      ENVIRONMENT = deepCopy({
-        ...ENVIRONMENT,
-        ...parsedContent,
-      })
-    }
-
     if (flags.script) {
-      await this.executeAction('Executing user script and getting', loadUserScript)
+      await this.executeAction('Executing user script', () => this.loadUserScriptValues(flags.script))
     }
 
-    const runUserCommand = () => {
-      execSync(COMMAND, {env: ENVIRONMENT, stdio: 'inherit'})
-    }
-
-    if (args[CMD_ARG] && !flags.json) {
-      await this.executeAction('Run specified command', runUserCommand)
+    if (args[CMD_ARG]) {
+      const environment = Object.fromEntries(this.environment) as Record<string, any> // create object from map because exec expects an object
+      await this.executeAction('Run specified command', () => execSync(USER_COMMAND, {env: environment, stdio: 'inherit'}))
     }
 
     if (flags.json) {
-      return ENVIRONMENT
+      return this.environment
     }
 
     this.exit(1)
