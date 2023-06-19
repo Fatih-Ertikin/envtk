@@ -42,7 +42,7 @@ export default class Run extends BaseCommand<typeof Run> {
     const COMMAND = args[CMD_ARG] // Command the user wants to run
     let ENVIRONMENT = deepCopy(process.env) // Current environment vars
 
-    if (!flags.envFile || !flags.script) {
+    if (!flags.envFile && !flags.script) {
       this.warn(
         'No flags given. command will still be executed but no new environment variables will be loaded (current process.env will be used).',
       )
