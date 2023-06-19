@@ -6,7 +6,7 @@
   "bin": {
     "envtk": "./bin/run"
   },
-  "homepage": "https://github.com/Development/envtk",
+  "homepage": "https://github.com/Fatih-Ertikin/envtk",
   "license": "MIT",
   "main": "dist/index.js",
   "repository": "Development/envtk",
