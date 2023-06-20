@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable unicorn/consistent-function-scoping */
+const mockSecrets = require('../helpers/mock-data')
 
 /**
  * Function to retrieve environment variables (for example aws secret manager)
@@ -5,9 +8,7 @@
  * @returns object with the env variables, values can only be strings, bools and numbers, can be of any depth, key names will be transformed into SCREAMING_SNAKE CASE
  */
 async function getEnvVars(currentEnv) {
-  const getSomethingFromMySecretManager = async () => ({
-    SecretKey: 'secretValue', // SECRET_KEY="secretValue"
-  })
+  const getSomethingFromMySecretManager = async () => mockSecrets
 
   const secret = await getSomethingFromMySecretManager()
 

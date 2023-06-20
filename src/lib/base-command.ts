@@ -22,7 +22,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       char: 's',
       description: 'path to .(mjs|js) script.',
       exists: true,
-      required: true,
+      required: false,
     }),
     [ENV_FILE_FLAG]: Flags.file({
       char: 'e',
