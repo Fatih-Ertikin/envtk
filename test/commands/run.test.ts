@@ -12,7 +12,7 @@ const SCRIPT_PATH = join(cwd(), 'test', 'files', 'async.cjs')
 const ENV_FILE_PATH = join(cwd(), 'test', 'files', '.test.env')
 
 const PRINT = true
-const COMMAND = process.platform === 'win32' ? 'call' : 'true'
+const COMMAND = process.platform === 'win32' ? 'rem' : 'true'
 
 describe('run', () => {
   test
@@ -22,9 +22,9 @@ describe('run', () => {
     '-s',
     SCRIPT_PATH,
     '--json'])
-  .it('should load env vars from user script (-s flag)', (ctx, done) => {
+  .it('should user commmand with env vars from script (-s flag)', (ctx, done) => {
     const output = JSON.parse(ctx.stdout) // parse output because we use the --JSON flag
-    // console.log(inspect(output, {showHidden: false, depth: null, colors: true}))
+    //  console.log(inspect(output, {showHidden: false, depth: null, colors: true}))
 
     // check if all mock items are present as CONSTANT_CASE env var in terminal output
     for (const [key, value] of Object.entries(mockSecrets)) {
@@ -42,7 +42,8 @@ describe('run', () => {
     '-e',
     ENV_FILE_PATH,
     '--json'])
-  .it('should load env vars from .env file  (-e flag)', (ctx, done) => {
+
+  .it('should user commmand with env vars from .env file  (-e flag)', (ctx, done) => {
     // parse output because we use the --JSON flag
     const output = JSON.parse(ctx.stdout)
 
