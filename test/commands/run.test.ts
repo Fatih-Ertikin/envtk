@@ -15,6 +15,8 @@ const PRINT = true
 const DUMMY_COMMAND = process.platform === 'win32' ? 'rem' : 'true'
 
 describe('run', () => {
+  beforeEach(done => setTimeout(done, 500))
+
   test
   .stdout({print: PRINT})
   .command(['run',

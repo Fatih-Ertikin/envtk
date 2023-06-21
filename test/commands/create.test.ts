@@ -26,6 +26,8 @@ function getEnvFileContent(path: string)  {
 }
 
 describe('create', () => {
+  beforeEach(done => setTimeout(done, 500))
+
   test
   .stdout({print: PRINT})
   .command(['create', OUTPUT_PATH, '-s', SCRIPT_PATH])
