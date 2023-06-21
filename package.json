@@ -1,6 +1,6 @@
 {
   "name": "envtk",
-  "version": "1.1.0",
+  "version": "0.0.0-development",
   "description": "CLI tool to asynchronously set environment variables before building a project.",
   "author": "Fatih Ertikin",
   "bin": {
@@ -46,7 +46,8 @@
     "shx": "^0.3.4",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.3",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "semantic-release": "^21.0.5"
   },
   "oclif": {
     "bin": "envtk",
@@ -64,7 +65,8 @@
     "posttest": "npm run lint",
     "prepack": "npm run build && oclif manifest && oclif readme",
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "oclif readme && git add README.md"
+    "version": "oclif readme && git add README.md",
+    "semantic-release": "semantic-release --branches master"
   },
   "engines": {
     "node": ">=12.0.0"
