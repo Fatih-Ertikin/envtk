@@ -8,8 +8,8 @@ import {inspect} from 'node:util'
 
 // eslint-disable-next-line unicorn/prefer-module
 const mockSecrets = require('../helpers/mock-data')
-const SCRIPT_PATH = join(cwd(), 'test', 'input-files', 'async.cjs')
-const ENV_FILE_PATH = join(cwd(), 'test', 'input-files', '.test.env')
+const SCRIPT_PATH = join(cwd(), 'test', 'files', 'async.cjs')
+const ENV_FILE_PATH = join(cwd(), 'test', 'files', '.test.env')
 
 const PRINT = true
 

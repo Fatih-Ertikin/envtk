@@ -57,6 +57,6 @@ export default class Create extends BaseCommand<typeof Create> {
       return envObj
     }
 
-    this.exit(1)
+    this.exit(0)
   }
 }
