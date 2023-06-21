@@ -12,8 +12,8 @@
           "args": [
             "run",
             "printenv",
-            "-s ${workspaceFolder}/test/async.js",
-            "-e ${workspaceFolder}/test/.test.env"
+            "-s ${workspaceFolder}/test/files/async.cjs",
+            "-e ${workspaceFolder}/test/files/.test.env"
           ],
       }
   ]

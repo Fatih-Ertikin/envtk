@@ -12,12 +12,13 @@ const SCRIPT_PATH = join(cwd(), 'test', 'files', 'async.cjs')
 const ENV_FILE_PATH = join(cwd(), 'test', 'files', '.test.env')
 
 const PRINT = true
+const COMMAND = process.platform === 'win32' ? 'call' : 'true'
 
 describe('run', () => {
   test
   .stdout({print: PRINT})
   .command(['run',
-    'true', // true does nothing when put into terminal
+    COMMAND, // true does nothing when put into terminal
     '-s',
     SCRIPT_PATH,
     '--json'])
@@ -37,7 +38,7 @@ describe('run', () => {
   test
   .stdout({print: PRINT})
   .command(['run',
-    'true',
+    COMMAND,
     '-e',
     ENV_FILE_PATH,
     '--json'])
@@ -62,7 +63,7 @@ describe('run', () => {
   test
   .stdout({print: PRINT})
   .command(['run',
-    'true',
+    COMMAND,
     '-e',
     ENV_FILE_PATH,
     '-s',
@@ -88,19 +89,6 @@ describe('run', () => {
       const expectedKey = constantCase(key)
       expect(output[expectedKey]).to.equal(value as any)
     }
-
-    done()
-  })
-
-  // TODO: warn tests
-  test
-  .stdout({print: PRINT})
-  .command(['run',
-    'true'])
-  .exit(0)
-  .it('should warn when no flags passed', (ctx, done) => {
-    // parse output because we use the --JSON flag
-    console.log(ctx.stdout)
 
     done()
   })
