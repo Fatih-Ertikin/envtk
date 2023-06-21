@@ -12,13 +12,13 @@ const SCRIPT_PATH = join(cwd(), 'test', 'files', 'async.cjs')
 const ENV_FILE_PATH = join(cwd(), 'test', 'files', '.test.env')
 
 const PRINT = true
-const COMMAND = process.platform === 'win32' ? 'rem' : 'true'
+const DUMMY_COMMAND = process.platform === 'win32' ? 'rem' : 'true'
 
 describe('run', () => {
   test
   .stdout({print: PRINT})
   .command(['run',
-    COMMAND, // true does nothing when put into terminal
+    DUMMY_COMMAND, // true does nothing when put into terminal
     '-s',
     SCRIPT_PATH,
     '--json'])
@@ -38,7 +38,7 @@ describe('run', () => {
   test
   .stdout({print: PRINT})
   .command(['run',
-    COMMAND,
+    DUMMY_COMMAND,
     '-e',
     ENV_FILE_PATH,
     '--json'])
@@ -64,7 +64,7 @@ describe('run', () => {
   test
   .stdout({print: PRINT})
   .command(['run',
-    COMMAND,
+    DUMMY_COMMAND,
     '-e',
     ENV_FILE_PATH,
     '-s',
