@@ -3,7 +3,8 @@ import {createSpinner} from 'nanospinner'
 import {getAbsolutePath, runUserScript} from './file-utils'
 import {existsSync} from 'node:fs'
 import {config} from 'dotenv'
-import {parseEnv} from './env'
+import {doSanitized} from './env'
+import {constantCase} from 'change-case'
 
 /** flags */
 const SCRIPT_FLAG = 'script' as const
@@ -51,6 +52,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     })
     this.flags = flags as Flags<T>
     this.args = args as Args<T>
+
     // Initialize environment with a copy of the current process.env
     const copy = JSON.parse(JSON.stringify(process.env))
     this.environment = new Map(Object.entries(copy))
@@ -98,6 +100,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       }
 
       // add result to environment map
+      // DONT change keys to CONSTANT_CASE to keep env vars exactly as inputted from file
       for (const [key, value] of Object.entries(result.parsed)) {
         this.environment.set(key, value)
       }
@@ -111,13 +114,15 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     const content = await runUserScript(path, this.environment)
 
     // parse script result:
-    // 1. All keys become CONSTANT_CASE
-    // 2. Every key whose value is not a string, boolean or number gets removed
-    const parsedContent = parseEnv(content)
+    // Every key whose value is not a string, boolean or number gets removed
+    const parsedContent: Record<string, boolean | string | number> = {}
+    doSanitized(content, (key, value) => {
+      parsedContent[key] = value
+    })
 
-    // add result to environment map
+    // add result to environment map and change keys to CONSTANT_CASE
     for (const [key, value] of Object.entries(parsedContent)) {
-      this.environment.set(key, value)
+      this.environment.set(constantCase(key), value)
     }
   }
 }
