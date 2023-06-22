@@ -111,7 +111,8 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
   protected async loadUserScriptValues(path: string): Promise<void> {
     // run user script with current env vars
-    const content = await runUserScript(path, this.environment)
+    const envObj = Object.fromEntries(this.environment) as Record<string, any> // create object from map because exec doesn't work with maps
+    const content = await runUserScript(path, envObj)
 
     // parse script result:
     // Every key whose value is not a string, boolean or number gets removed
