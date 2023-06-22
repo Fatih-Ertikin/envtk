@@ -5,7 +5,7 @@ import {cwd} from 'node:process'
 import {extname, join} from 'node:path'
 import {existsSync,  unlinkSync} from 'node:fs'
 import {constantCase} from 'change-case'
-import {getEnvFileContent} from '../helpers/test-functions'
+import {checkObjectContains, getEnvFileContent} from '../helpers/test-functions'
 
 const mockSecrets = require('../helpers/mock-data')
 const PRINT = !process.env.CI
@@ -38,10 +38,7 @@ describe('create', () => {
       const result = getEnvFileContent(OUTPUT_PATH)
 
       // 3. Check if all mock secrets (that the script returns) are present in file
-      for (const [key, value] of Object.entries(mockSecrets)) {
-        const expectedKey = constantCase(key)
-        expect(result[expectedKey]).to.equal(value as any)
-      }
+      checkObjectContains(result, mockSecrets, true) // env vars from script should be CONSTANT_CASE
 
       done()
     },
