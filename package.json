@@ -1,6 +1,6 @@
 {
   "name": "envtk",
-  "version": "2.0.1",
+  "version": "0.0.0-development",
   "description": "CLI tool to asynchronously set environment variables before building a project.",
   "author": "Fatih Ertikin",
   "bin": {
