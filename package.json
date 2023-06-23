@@ -1,6 +1,6 @@
 {
   "name": "envtk",
-  "version": "0.0.0-development",
+  "version": "2.0.1",
   "description": "CLI tool to asynchronously set environment variables before building a project.",
   "author": "Fatih Ertikin",
   "bin": {
@@ -90,9 +90,9 @@
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/changelog",
+      "@semantic-release/npm",
       "@semantic-release/git",
-      "@semantic-release/github",
-      "@semantic-release/npm"
+      "@semantic-release/github"
     ]
   }
 }
