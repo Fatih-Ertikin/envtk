@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {test} from '@oclif/test'
 import {join} from 'node:path'
 import {cwd} from 'node:process'

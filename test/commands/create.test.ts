@@ -1,5 +1,4 @@
 /* eslint-disable unicorn/prefer-module */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {expect, test} from '@oclif/test'
 import {cwd} from 'node:process'
 import {extname, join} from 'node:path'

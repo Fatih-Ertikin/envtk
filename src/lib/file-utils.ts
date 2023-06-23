@@ -1,6 +1,6 @@
 import {isFunction} from 'lodash'
-import {createWriteStream, existsSync} from 'node:fs'
-import {basename, extname, isAbsolute, join, resolve} from 'node:path'
+import {existsSync, writeFileSync} from 'node:fs'
+import {basename, extname, isAbsolute, join} from 'node:path'
 import {NoValidScriptError} from './errors'
 import {createEnvString, doSanitized} from './env'
 
@@ -41,14 +41,16 @@ export function createEnvFile(
   outputPath: string,
 ): void {
   // 1. Create writable stream on output path
-  const stream = createWriteStream(resolve(outputPath.toString()))
+  let fileContent = ''
 
   // 2. recursive function to write obj in kvp format to stream
   doSanitized(inputObject, (key, value) => {
     const envString = createEnvString(key, value)
     // 3. write input object to file
-    stream.write(envString)
+    fileContent += envString
   })
+
+  writeFileSync(outputPath, fileContent)
 }
 
 /**
