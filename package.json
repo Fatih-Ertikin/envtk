@@ -35,6 +35,8 @@
   },
   "devDependencies": {
     "@oclif/test": "^2.3.23",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@types/chai": "^4",
     "@types/figlet": "^1.5.6",
     "@types/gradient-string": "^1.1.2",
@@ -70,7 +72,7 @@
     "prepack": "npm run build && oclif manifest && oclif readme",
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif readme && git add README.md",
-    "semantic-release": "semantic-release --branches master",
+    "semantic-release": "semantic-release",
     "commit": "git-cz"
   },
   "engines": {
@@ -85,5 +87,17 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "release": {
+    "branches": [
+      "master"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/changelog",
+      "@semantic-release/git",
+      "@semantic-release/github",
+      "@semantic-release/npm"
+    ]
   }
 }
