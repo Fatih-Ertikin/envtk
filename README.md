@@ -66,18 +66,46 @@ USAGE
   # Commands
 
   <!-- commands -->
+* [`envtk run COMMAND`](#envtk-run-command)
 * [`envtk create OUTPUT`](#envtk-create-output)
 * [`envtk help [COMMANDS]`](#envtk-help-commands)
-* [`envtk plugins`](#envtk-plugins)
-* [`envtk plugins:install PLUGIN...`](#envtk-pluginsinstall-plugin)
-* [`envtk plugins:inspect PLUGIN...`](#envtk-pluginsinspect-plugin)
-* [`envtk plugins:install PLUGIN...`](#envtk-pluginsinstall-plugin-1)
-* [`envtk plugins:link PLUGIN`](#envtk-pluginslink-plugin)
-* [`envtk plugins:uninstall PLUGIN...`](#envtk-pluginsuninstall-plugin)
-* [`envtk plugins:uninstall PLUGIN...`](#envtk-pluginsuninstall-plugin-1)
-* [`envtk plugins:uninstall PLUGIN...`](#envtk-pluginsuninstall-plugin-2)
-* [`envtk plugins:update`](#envtk-pluginsupdate)
-* [`envtk run COMMAND`](#envtk-run-command)
+
+
+## `envtk run COMMAND`
+
+run a given command with loaded env variables
+
+```
+USAGE
+  $ envtk run COMMAND [--json] [-s <value>] [-e <value>] [-v]
+
+ARGUMENTS
+  COMMAND  command to run with the loaded environment variables
+
+FLAGS
+  -e, --envFile=<value>  path to .env file with defaults to include
+  -s, --script=<value>   path to .(mjs|js) script.
+  -v, --verbose
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  run a given command with loaded env variables
+
+EXAMPLES
+  Run command with env variables returned from script
+
+    $ envtk run "npm run dev" -s ./load-env.js
+
+  Run command with env variables returned from script and include defaults from ".env"
+
+    $ envtk run "npm run dev" -s ./load-env.js -e .env
+```
+
+_See code: [dist/commands/run.ts](https://github.com/Fatih-Ertikin/envtk/blob/v0.0.0-development/dist/commands/run.ts)_
+<!-- commandsstop -->
+
 
 ## `envtk create OUTPUT`
 
@@ -133,280 +161,3 @@ DESCRIPTION
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.9/src/commands/help.ts)_
 
-## `envtk plugins`
-
-List installed plugins.
-
-```
-USAGE
-  $ envtk plugins [--core]
-
-FLAGS
-  --core  Show core plugins.
-
-DESCRIPTION
-  List installed plugins.
-
-EXAMPLES
-  $ envtk plugins
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/index.ts)_
-
-## `envtk plugins:install PLUGIN...`
-
-Installs a plugin into the CLI.
-
-```
-USAGE
-  $ envtk plugins:install PLUGIN...
-
-ARGUMENTS
-  PLUGIN  Plugin to install.
-
-FLAGS
-  -f, --force    Run yarn install with force flag.
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Installs a plugin into the CLI.
-  Can be installed from npm or a git url.
-
-  Installation of a user-installed plugin will override a core plugin.
-
-  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
-  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
-  the CLI without the need to patch and update the whole CLI.
-
-
-ALIASES
-  $ envtk plugins:add
-
-EXAMPLES
-  $ envtk plugins:install myplugin 
-
-  $ envtk plugins:install https://github.com/someuser/someplugin
-
-  $ envtk plugins:install someuser/someplugin
-```
-
-## `envtk plugins:inspect PLUGIN...`
-
-Displays installation properties of a plugin.
-
-```
-USAGE
-  $ envtk plugins:inspect PLUGIN...
-
-ARGUMENTS
-  PLUGIN  [default: .] Plugin to inspect.
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  Displays installation properties of a plugin.
-
-EXAMPLES
-  $ envtk plugins:inspect myplugin
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/inspect.ts)_
-
-## `envtk plugins:install PLUGIN...`
-
-Installs a plugin into the CLI.
-
-```
-USAGE
-  $ envtk plugins:install PLUGIN...
-
-ARGUMENTS
-  PLUGIN  Plugin to install.
-
-FLAGS
-  -f, --force    Run yarn install with force flag.
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Installs a plugin into the CLI.
-  Can be installed from npm or a git url.
-
-  Installation of a user-installed plugin will override a core plugin.
-
-  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
-  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
-  the CLI without the need to patch and update the whole CLI.
-
-
-ALIASES
-  $ envtk plugins:add
-
-EXAMPLES
-  $ envtk plugins:install myplugin 
-
-  $ envtk plugins:install https://github.com/someuser/someplugin
-
-  $ envtk plugins:install someuser/someplugin
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/install.ts)_
-
-## `envtk plugins:link PLUGIN`
-
-Links a plugin into the CLI for development.
-
-```
-USAGE
-  $ envtk plugins:link PLUGIN
-
-ARGUMENTS
-  PATH  [default: .] path to plugin
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Links a plugin into the CLI for development.
-  Installation of a linked plugin will override a user-installed or core plugin.
-
-  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello'
-  command will override the user-installed or core plugin implementation. This is useful for development work.
-
-
-EXAMPLES
-  $ envtk plugins:link myplugin
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/link.ts)_
-
-## `envtk plugins:uninstall PLUGIN...`
-
-Removes a plugin from the CLI.
-
-```
-USAGE
-  $ envtk plugins:uninstall PLUGIN...
-
-ARGUMENTS
-  PLUGIN  plugin to uninstall
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Removes a plugin from the CLI.
-
-ALIASES
-  $ envtk plugins:unlink
-  $ envtk plugins:remove
-```
-
-## `envtk plugins:uninstall PLUGIN...`
-
-Removes a plugin from the CLI.
-
-```
-USAGE
-  $ envtk plugins:uninstall PLUGIN...
-
-ARGUMENTS
-  PLUGIN  plugin to uninstall
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Removes a plugin from the CLI.
-
-ALIASES
-  $ envtk plugins:unlink
-  $ envtk plugins:remove
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/uninstall.ts)_
-
-## `envtk plugins:uninstall PLUGIN...`
-
-Removes a plugin from the CLI.
-
-```
-USAGE
-  $ envtk plugins:uninstall PLUGIN...
-
-ARGUMENTS
-  PLUGIN  plugin to uninstall
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Removes a plugin from the CLI.
-
-ALIASES
-  $ envtk plugins:unlink
-  $ envtk plugins:remove
-```
-
-## `envtk plugins:update`
-
-Update installed plugins.
-
-```
-USAGE
-  $ envtk plugins:update [-h] [-v]
-
-FLAGS
-  -h, --help     Show CLI help.
-  -v, --verbose
-
-DESCRIPTION
-  Update installed plugins.
-```
-
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/update.ts)_
-
-## `envtk run COMMAND`
-
-run a given command with loaded env variables
-
-```
-USAGE
-  $ envtk run COMMAND [--json] [-s <value>] [-e <value>] [-v]
-
-ARGUMENTS
-  COMMAND  command to run with the loaded environment variables
-
-FLAGS
-  -e, --envFile=<value>  path to .env file with defaults to include
-  -s, --script=<value>   path to .(mjs|js) script.
-  -v, --verbose
-
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  run a given command with loaded env variables
-
-EXAMPLES
-  Run command with env variables returned from script
-
-    $ envtk run "npm run dev" -s ./load-env.js
-
-  Run command with env variables returned from script and include defaults from ".env"
-
-    $ envtk run "npm run dev" -s ./load-env.js -e .env
-```
-
-_See code: [dist/commands/run.ts](https://github.com/Fatih-Ertikin/envtk/blob/v0.0.0-development/dist/commands/run.ts)_
-<!-- commandsstop -->
