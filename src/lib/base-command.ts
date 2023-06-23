@@ -9,7 +9,6 @@ import {ERROR_CODES} from './errors'
 /** flags */
 const SCRIPT_FLAG = 'script' as const
 const ENV_FILE_FLAG = 'envFile' as const
-const SILENT_FLAG = 'silent' as const
 
 export type Flags<T extends typeof Command> = Interfaces.InferredFlags<
   (typeof BaseCommand)['baseFlags'] & T['flags']
@@ -31,10 +30,6 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       char: 'e',
       description: 'path to .env file with defaults to include',
       exists: true,
-      required: false,
-    }),
-    [SILENT_FLAG]: Flags.boolean({
-      default: false,
       required: false,
     }),
   };

@@ -76,7 +76,7 @@ create a .env file using env vars loaded from a script or existing .env files
 
 ```
 USAGE
-  $ envtk create OUTPUT [--json] [-s <value>] [-e <value>] [-v]
+  $ envtk create OUTPUT [--json] [-s <value>] [-e <value>]
 
 ARGUMENTS
   OUTPUT  path for the output file
@@ -84,7 +84,6 @@ ARGUMENTS
 FLAGS
   -e, --envFile=<value>  path to .env file with defaults to include
   -s, --script=<value>   path to .(mjs|js) script.
-  -v, --verbose
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -130,7 +129,7 @@ run a given command with loaded env variables
 
 ```
 USAGE
-  $ envtk run COMMAND [--json] [-s <value>] [-e <value>] [-v]
+  $ envtk run COMMAND [--json] [-s <value>] [-e <value>] [--silent]
 
 ARGUMENTS
   COMMAND  command to run with the loaded environment variables
@@ -138,7 +137,6 @@ ARGUMENTS
 FLAGS
   -e, --envFile=<value>  path to .env file with defaults to include
   -s, --script=<value>   path to .(mjs|js) script.
-  -v, --verbose
 
 GLOBAL FLAGS
   --json  Format output as json.
