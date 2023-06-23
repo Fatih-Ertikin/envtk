@@ -1,7 +1,7 @@
 import {isFunction} from 'lodash'
 import {existsSync, writeFileSync} from 'node:fs'
 import {basename, extname, isAbsolute, join} from 'node:path'
-import {NoValidScriptError} from './errors'
+import {NoValidScriptError, NonExistingFileError, WrongFileExtensionError} from './errors'
 import {createEnvString, doSanitized} from './env'
 
 /**
@@ -69,31 +69,17 @@ export async function runUserScript(
   const scriptPath = getAbsolutePath(path)
 
   if (!existsSync(scriptPath)) {
-    throw new NoValidScriptError({
-      message: `Could not find script file at location: ${scriptPath}`,
-      suggestions: ['check if the script does exist at the given location'],
-      ref: 'http://www.google.com',
-    })
+    throw new NonExistingFileError('user script', scriptPath)
   }
 
   if (!checkFileExtension(scriptPath, allowedExtensions)) {
-    throw new NoValidScriptError({
-      message: `file extension is not one of: ${allowedExtensions.join(',')}`,
-      suggestions: ['check if the scripts has a .js or .cjs extension'],
-      ref: 'http://www.google.com',
-    })
+    throw new WrongFileExtensionError(scriptPath, allowedExtensions)
   }
 
   const userScript = (await import(scriptPath)).default
 
   if (!isFunction(userScript)) {
-    throw new NoValidScriptError({
-      suggestions: [
-        'check if the scripts default export is a function',
-        'check if commonJS exports are used (ES6 exports dont work yet)',
-      ],
-      ref: 'http://www.google.com',
-    })
+    throw new NoValidScriptError(userScript)
   }
 
   const result = await userScript(args)
