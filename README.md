@@ -46,66 +46,367 @@ ENV_VALUE_FROM_SCRIPT="abc123"
 I noticed that a lot of populair frameworks, infrastructure tooling or other 3rd party services make use of environment variables or .env files but provide no way to load them from a 3rd pary secret manager (for example [AWS Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html)).
 
 While tooling like [dotenv-vault](https://www.dotenv.org/docs/quickstart) provides alot of functionality for safely managing secrets/environment variables, not everyone uses or can use dotenv-vault. This project aims to be a simple alternative tool for retrieving your secrets from wherever: a 3rd pary API, encrypted database, whatever and then passing those variables to the next step in your startup/deploy pipeline.
-## Usage/Examples
-envtk has 2 commands:
-- run <- runs a command with the new environment variables
-- create <- creates a new .env file with the new environment variables
 
-### Using a script to (asynchronously) retrieve and set new environment variables:
-Create javascript file `my-script.js`:
-```javascript
+# Usage
 
-// function to get env vars from a 3rd party api
-const getSomethingFromApi = async () => ({
-    value: "abc123"
-});
+  <!-- usage -->
+```sh-session
+$ npm install -g envtk
+$ envtk COMMAND
+running command...
+$ envtk (--version)
+envtk/0.0.0-development linux-x64 node-v18.16.0
+$ envtk --help [COMMAND]
+USAGE
+  $ envtk COMMAND
+...
+```
+<!-- usagestop -->
 
-async function getSomethingFromApi() {  
-    const secrets = await getSomethingFromApi();
-   
-    return {
-        MY_SECRET: secrets.value 
-    };
-}
-module.exports = getSomethingFromApi // <- default export the function
+  # Commands
+
+  <!-- commands -->
+* [`envtk create OUTPUT`](#envtk-create-output)
+* [`envtk help [COMMANDS]`](#envtk-help-commands)
+* [`envtk plugins`](#envtk-plugins)
+* [`envtk plugins:install PLUGIN...`](#envtk-pluginsinstall-plugin)
+* [`envtk plugins:inspect PLUGIN...`](#envtk-pluginsinspect-plugin)
+* [`envtk plugins:install PLUGIN...`](#envtk-pluginsinstall-plugin-1)
+* [`envtk plugins:link PLUGIN`](#envtk-pluginslink-plugin)
+* [`envtk plugins:uninstall PLUGIN...`](#envtk-pluginsuninstall-plugin)
+* [`envtk plugins:uninstall PLUGIN...`](#envtk-pluginsuninstall-plugin-1)
+* [`envtk plugins:uninstall PLUGIN...`](#envtk-pluginsuninstall-plugin-2)
+* [`envtk plugins:update`](#envtk-pluginsupdate)
+* [`envtk run COMMAND`](#envtk-run-command)
+
+## `envtk create OUTPUT`
+
+create a .env file using env vars loaded from a script or existing .env files
+
 ```
-Then in the terminal execute the `run` command:
-```bash
-$ envtk run printenv -s ./my-script.js # <- use script flag (-s/--script)
+USAGE
+  $ envtk create OUTPUT [--json] [-s <value>] [-e <value>] [-v]
+
+ARGUMENTS
+  OUTPUT  path for the output file
+
+FLAGS
+  -e, --envFile=<value>  path to .env file with defaults to include
+  -s, --script=<value>   path to .(mjs|js) script.
+  -v, --verbose
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  create a .env file using env vars loaded from a script or existing .env files
+
+EXAMPLES
+  Create .env file with env variables returned from script
+
+    $ envtk create ".env" -s ./load-env.js
+
+  Create .env file with env variables returned from script and include defaults from ".defaults.env"
+
+    $ envtk create ".env" -s ./load-env.js -e .defaults.env
 ```
 
-Output:
-```
-MY_SECRET: "abc123"
-```
-Because we ran "printenv" the current environment variables get printed to the terminal.
-If would for example start a node project, that node project would have access to `process.env.MY_SECRET`
+_See code: [dist/commands/create.ts](https://github.com/Fatih-Ertikin/envtk/blob/v0.0.0-development/dist/commands/create.ts)_
 
-### load env variables from a user script and write to new .env file
-Create javascript file `my-script.js`:
-```javascript
+## `envtk help [COMMANDS]`
 
-// function to get env vars from a 3rd party api
-const getSomethingFromApi = async () => ({
-    value: "abc123"
-});
+Display help for envtk.
 
-async function getSomethingFromApi() {  
-    const secrets = await getSomethingFromApi();
-   
-    return {
-        MY_SECRET: secrets.value 
-    };
-}
-module.exports = getSomethingFromApi // <- default export the function
 ```
-Then in the terminal run the `create` command:
-```bash
-$ envtk create ./.new-file.env -s ./my-script.js 
+USAGE
+  $ envtk help [COMMANDS] [-n]
+
+ARGUMENTS
+  COMMANDS  Command to show help for.
+
+FLAGS
+  -n, --nested-commands  Include all nested commands in the output.
+
+DESCRIPTION
+  Display help for envtk.
 ```
 
-Output file `.new-file.env`:
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.9/src/commands/help.ts)_
+
+## `envtk plugins`
+
+List installed plugins.
+
 ```
-MY_SECRET: "abc123"
+USAGE
+  $ envtk plugins [--core]
+
+FLAGS
+  --core  Show core plugins.
+
+DESCRIPTION
+  List installed plugins.
+
+EXAMPLES
+  $ envtk plugins
 ```
-Because we ran "printenv" the current environment variables get printed to the terminal.
+
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/index.ts)_
+
+## `envtk plugins:install PLUGIN...`
+
+Installs a plugin into the CLI.
+
+```
+USAGE
+  $ envtk plugins:install PLUGIN...
+
+ARGUMENTS
+  PLUGIN  Plugin to install.
+
+FLAGS
+  -f, --force    Run yarn install with force flag.
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+DESCRIPTION
+  Installs a plugin into the CLI.
+  Can be installed from npm or a git url.
+
+  Installation of a user-installed plugin will override a core plugin.
+
+  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
+  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
+  the CLI without the need to patch and update the whole CLI.
+
+
+ALIASES
+  $ envtk plugins:add
+
+EXAMPLES
+  $ envtk plugins:install myplugin 
+
+  $ envtk plugins:install https://github.com/someuser/someplugin
+
+  $ envtk plugins:install someuser/someplugin
+```
+
+## `envtk plugins:inspect PLUGIN...`
+
+Displays installation properties of a plugin.
+
+```
+USAGE
+  $ envtk plugins:inspect PLUGIN...
+
+ARGUMENTS
+  PLUGIN  [default: .] Plugin to inspect.
+
+FLAGS
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  Displays installation properties of a plugin.
+
+EXAMPLES
+  $ envtk plugins:inspect myplugin
+```
+
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/inspect.ts)_
+
+## `envtk plugins:install PLUGIN...`
+
+Installs a plugin into the CLI.
+
+```
+USAGE
+  $ envtk plugins:install PLUGIN...
+
+ARGUMENTS
+  PLUGIN  Plugin to install.
+
+FLAGS
+  -f, --force    Run yarn install with force flag.
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+DESCRIPTION
+  Installs a plugin into the CLI.
+  Can be installed from npm or a git url.
+
+  Installation of a user-installed plugin will override a core plugin.
+
+  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
+  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
+  the CLI without the need to patch and update the whole CLI.
+
+
+ALIASES
+  $ envtk plugins:add
+
+EXAMPLES
+  $ envtk plugins:install myplugin 
+
+  $ envtk plugins:install https://github.com/someuser/someplugin
+
+  $ envtk plugins:install someuser/someplugin
+```
+
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/install.ts)_
+
+## `envtk plugins:link PLUGIN`
+
+Links a plugin into the CLI for development.
+
+```
+USAGE
+  $ envtk plugins:link PLUGIN
+
+ARGUMENTS
+  PATH  [default: .] path to plugin
+
+FLAGS
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+DESCRIPTION
+  Links a plugin into the CLI for development.
+  Installation of a linked plugin will override a user-installed or core plugin.
+
+  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello'
+  command will override the user-installed or core plugin implementation. This is useful for development work.
+
+
+EXAMPLES
+  $ envtk plugins:link myplugin
+```
+
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/link.ts)_
+
+## `envtk plugins:uninstall PLUGIN...`
+
+Removes a plugin from the CLI.
+
+```
+USAGE
+  $ envtk plugins:uninstall PLUGIN...
+
+ARGUMENTS
+  PLUGIN  plugin to uninstall
+
+FLAGS
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+DESCRIPTION
+  Removes a plugin from the CLI.
+
+ALIASES
+  $ envtk plugins:unlink
+  $ envtk plugins:remove
+```
+
+## `envtk plugins:uninstall PLUGIN...`
+
+Removes a plugin from the CLI.
+
+```
+USAGE
+  $ envtk plugins:uninstall PLUGIN...
+
+ARGUMENTS
+  PLUGIN  plugin to uninstall
+
+FLAGS
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+DESCRIPTION
+  Removes a plugin from the CLI.
+
+ALIASES
+  $ envtk plugins:unlink
+  $ envtk plugins:remove
+```
+
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/uninstall.ts)_
+
+## `envtk plugins:uninstall PLUGIN...`
+
+Removes a plugin from the CLI.
+
+```
+USAGE
+  $ envtk plugins:uninstall PLUGIN...
+
+ARGUMENTS
+  PLUGIN  plugin to uninstall
+
+FLAGS
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+DESCRIPTION
+  Removes a plugin from the CLI.
+
+ALIASES
+  $ envtk plugins:unlink
+  $ envtk plugins:remove
+```
+
+## `envtk plugins:update`
+
+Update installed plugins.
+
+```
+USAGE
+  $ envtk plugins:update [-h] [-v]
+
+FLAGS
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+DESCRIPTION
+  Update installed plugins.
+```
+
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.4.7/src/commands/plugins/update.ts)_
+
+## `envtk run COMMAND`
+
+run a given command with loaded env variables
+
+```
+USAGE
+  $ envtk run COMMAND [--json] [-s <value>] [-e <value>] [-v]
+
+ARGUMENTS
+  COMMAND  command to run with the loaded environment variables
+
+FLAGS
+  -e, --envFile=<value>  path to .env file with defaults to include
+  -s, --script=<value>   path to .(mjs|js) script.
+  -v, --verbose
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  run a given command with loaded env variables
+
+EXAMPLES
+  Run command with env variables returned from script
+
+    $ envtk run "npm run dev" -s ./load-env.js
+
+  Run command with env variables returned from script and include defaults from ".env"
+
+    $ envtk run "npm run dev" -s ./load-env.js -e .env
+```
+
+_See code: [dist/commands/run.ts](https://github.com/Fatih-Ertikin/envtk/blob/v0.0.0-development/dist/commands/run.ts)_
+<!-- commandsstop -->

@@ -6,7 +6,7 @@ import {createEnvFile} from '../lib/file-utils'
 const OUTPUT_ARG = 'output'
 
 export default class Create extends BaseCommand<typeof Create> {
-  static description = 'describe the command here'
+  static description = 'create a .env file using env vars loaded from a script or existing .env files'
 
   static examples = [
     {
