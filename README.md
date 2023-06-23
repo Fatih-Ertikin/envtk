@@ -66,10 +66,63 @@ USAGE
   # Commands
 
   <!-- commands -->
-* [`envtk run COMMAND`](#envtk-run-command)
 * [`envtk create OUTPUT`](#envtk-create-output)
 * [`envtk help [COMMANDS]`](#envtk-help-commands)
+* [`envtk run COMMAND`](#envtk-run-command)
 
+## `envtk create OUTPUT`
+
+create a .env file using env vars loaded from a script or existing .env files
+
+```
+USAGE
+  $ envtk create OUTPUT [--json] [-s <value>] [-e <value>] [-v]
+
+ARGUMENTS
+  OUTPUT  path for the output file
+
+FLAGS
+  -e, --envFile=<value>  path to .env file with defaults to include
+  -s, --script=<value>   path to .(mjs|js) script.
+  -v, --verbose
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  create a .env file using env vars loaded from a script or existing .env files
+
+EXAMPLES
+  Create .env file with env variables returned from script
+
+    $ envtk create ".env" -s ./load-env.js
+
+  Create .env file with env variables returned from script and include defaults from ".defaults.env"
+
+    $ envtk create ".env" -s ./load-env.js -e .defaults.env
+```
+
+_See code: [dist/commands/create.ts](https://github.com/Fatih-Ertikin/envtk/blob/v0.0.0-development/dist/commands/create.ts)_
+
+## `envtk help [COMMANDS]`
+
+Display help for envtk.
+
+```
+USAGE
+  $ envtk help [COMMANDS] [-n]
+
+ARGUMENTS
+  COMMANDS  Command to show help for.
+
+FLAGS
+  -n, --nested-commands  Include all nested commands in the output.
+
+DESCRIPTION
+  Display help for envtk.
+```
+
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.9/src/commands/help.ts)_
 
 ## `envtk run COMMAND`
 
@@ -160,4 +213,3 @@ DESCRIPTION
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.9/src/commands/help.ts)_
-
