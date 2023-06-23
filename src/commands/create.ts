@@ -33,25 +33,16 @@ export default class Create extends BaseCommand<typeof Create> {
 
     const outputPath = args[OUTPUT_ARG] // output path of new .env file
 
-    if (!flags.envFile && !flags.script) {
-      this.warn(`No flags passed! Only current environment variables written in file: ${outputPath}. Envtk will NOT load new environment variables.`)
-    }
-
     if (flags.envFile) {
-      await this.executeAction('Reading user specified env file', () =>
-        this.loadEnvironmentFile(flags.envFile!),
-      )
+      this.loadEnvironmentFile(flags.envFile)
     }
 
     if (flags.script) {
-      await this.executeAction('Executing user script', () => this.loadUserScriptValues(flags.script!))
+      await this.loadUserScriptValues(flags.script)
     }
 
     const envObj = Object.fromEntries(this.environment) // create object because createEnvFile doesn't work with maps
-
-    await this.executeAction('Creating file', () => {
-      createEnvFile(envObj, outputPath)
-    })
+    createEnvFile(envObj, outputPath)
 
     if (flags.json) {
       return envObj

@@ -35,23 +35,17 @@ export default class Run extends BaseCommand<typeof Run> {
     const {args, flags} = await this.parse(Run)
 
     const USER_COMMAND = args[CMD_ARG] // Command the user wants to run
-    if (!flags.envFile && !flags.script) {
-      this.warn('No flags passed! commmand will still be executed but no new environment variables will be loaded & set. Envtk does nothing...')
-    }
 
     if (flags.envFile) {
-      await this.executeAction('Reading user specified env file', () =>
-        this.loadEnvironmentFile(flags.envFile!),
-      )
+      this.loadEnvironmentFile(flags.envFile)
     }
 
     if (flags.script) {
-      await this.executeAction('Executing user script', () => this.loadUserScriptValues(flags.script!))
+      await this.loadUserScriptValues(flags.script!)
     }
 
     const envObj = Object.fromEntries(this.environment) as Record<string, any> // create object from map because exec doesn't work with maps
-
-    await this.executeAction('Run specified command', () => execSync(USER_COMMAND, {env: envObj, stdio: 'inherit'}))
+    execSync(USER_COMMAND, {env: envObj, stdio: 'inherit'})
 
     if (flags.json) {
       return envObj
