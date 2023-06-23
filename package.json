@@ -9,7 +9,10 @@
   "homepage": "https://github.com/Fatih-Ertikin/envtk",
   "license": "MIT",
   "main": "dist/index.js",
-  "repository": "Development/envtk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Fatih-Ertikin/envtk"
+  },
   "files": [
     "/bin",
     "/dist",
