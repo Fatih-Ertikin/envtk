@@ -1,44 +1,72 @@
 
-# Envtk - environment toolkit
+# Async env
+
+![header](docs/images/envtk.svg)
+
+
+![npm](https://img.shields.io/npm/dt/envtk)
+![npm](https://img.shields.io/npm/v/envtk)
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/fatih-ertikin/envtk/publish.yml)
 [![GitHub license](https://img.shields.io/github/license/oclif/hello-world)](https://github.com/oclif/hello-world/blob/main/LICENSE)
 
 
-CLI tool to asynchronously load environment variables from a script and:
-- run another command with those variables as environment (for example starting a node project)
-- output the resulting environment variables as a new .env file
-- use existing .env files to load defaults into a user script
-- output the result as JSON in the terminal
+## Features
 
-
-
+- run commands with preloaded environment variables from a javascript file (supports async)
+- run commands with preloaded environment variables from an existing .env file
+- output the resulting environment variables as JSON for integration with other scripting languages
 
 ## Installation
+Currently there are 2 ways of installing envtk
 
-Install envtk with npm:
+### NPM
+envtk can be installed via [npm](https://www.npmjs.com/package/envtk):
 
 ```bash
   $ npm install -g envtk
-```  
+```
+
+### Binaries
+Binaries for each OS can be downloaded from the [releases page](https://github.com/Fatih-Ertikin/envtk/releases)
+
+Refer to the installation docs for each OS on how to install envtk.
+
 ## Quickstart
 
-running a command with environment variables from a script:
+1. Create a javascript file (we'll call it `myScript.js`) and default export a function that returns an object:
+
+<p align="center">
+  <img src="docs/images/script.png" width="800" alt="an image of a js script"/>
+</p>
+
+2. (optional) Create a .env file with defaults to include, lets call it `defaults.env`:
+<p align="center">
+  <img src="docs/images/env-file.png" width="500" alt="an image of a js script"/>
+</p>
+
+3. run the envtk `run` command and reference the files created above, we will execute the [printenv](https://www.ibm.com/docs/en/aix/7.1?topic=p-printenv-command) command to see all current environment variables:
+
 ```bash
-  $ envtk run printenv --script=myScript.js
-  ENV_VALUE_FROM_SCRIPT="abc123"
+  $ npx envtk run printenv -s myScript.js -e defaults.env
 ```
 
-creating a new .env file with environment variables from a script:
+will result in the following output:
+
 ```bash
-  $ envtk create ".new.env" --script=myScript.js
-```  
-`.new.env`:
+MY_ENV_VAR=abc123
+SECRET=SomethingFromAnApi
+MY_AWS_SECRET_NAME=myAppSecret
+DEFAULT_ENV_VAR=someDefaultThing
 ```
-ENV_VALUE_FROM_SCRIPT="abc123"
-```
+
+Note: we see the result printed because we ran `printenv`. If we had let's say a project that started with `npm run dev` and we passed that as command (so `envtk run "npm run dev" -s myScript.js -e defaults.env`, that project would now have access to the above environment variables via `process.env`
+
 ## Table of contents
-* [Motives](#Motives)
-* [Usage/examples](#Usage/Examples)
+* [Features](#features)
+* [Installation](#installation)
+* [Quickstart](#quickstart)
+* [Motives](#otives)
 
 
 ## Motives
@@ -47,7 +75,7 @@ I noticed that a lot of populair frameworks, infrastructure tooling or other 3rd
 
 While tooling like [dotenv-vault](https://www.dotenv.org/docs/quickstart) provides alot of functionality for safely managing secrets/environment variables, not everyone uses or can use dotenv-vault. This project aims to be a simple alternative tool for retrieving your secrets from wherever: a 3rd pary API, encrypted database, whatever and then passing those variables to the next step in your startup/deploy pipeline.
 
-# Usage
+  # Usage
 
   <!-- usage -->
 ```sh-session
@@ -66,7 +94,42 @@ USAGE
   # Commands
 
   <!-- commands -->
+* [`envtk create OUTPUT`](#envtk-create-output)
 * [`envtk help [COMMANDS]`](#envtk-help-commands)
+* [`envtk run COMMAND`](#envtk-run-command)
+
+## `envtk create OUTPUT`
+
+create a .env file using env vars loaded from a script or existing .env files
+
+```
+USAGE
+  $ envtk create OUTPUT [--json] [-s <value>] [-e <value>]
+
+ARGUMENTS
+  OUTPUT  path for the output file
+
+FLAGS
+  -e, --envFile=<value>  path to .env file with defaults to include
+  -s, --script=<value>   path to .(mjs|js) script.
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+DESCRIPTION
+  create a .env file using env vars loaded from a script or existing .env files
+
+EXAMPLES
+  Create .env file with env variables returned from script
+
+    $ envtk create ".env" -s ./load-env.js
+
+  Create .env file with env variables returned from script and include defaults from ".defaults.env"
+
+    $ envtk create ".env" -s ./load-env.js -e .defaults.env
+```
+
+_See code: [dist/commands/create.ts](https://github.com/Fatih-Ertikin/envtk/blob/v2.0.2/dist/commands/create.ts)_
 
 ## `envtk help [COMMANDS]`
 
@@ -87,59 +150,37 @@ DESCRIPTION
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.10/src/commands/help.ts)_
-<!-- commandsstop -->
 
+## `envtk run COMMAND`
 
-## `envtk create OUTPUT`
-
-create a .env file using env vars loaded from a script or existing .env files
+run a given command with loaded env variables
 
 ```
 USAGE
-  $ envtk create OUTPUT [--json] [-s <value>] [-e <value>] [-v]
+  $ envtk run COMMAND [--json] [-s <value>] [-e <value>]
 
 ARGUMENTS
-  OUTPUT  path for the output file
+  COMMAND  command to run with the loaded environment variables
 
 FLAGS
   -e, --envFile=<value>  path to .env file with defaults to include
   -s, --script=<value>   path to .(mjs|js) script.
-  -v, --verbose
 
 GLOBAL FLAGS
   --json  Format output as json.
 
 DESCRIPTION
-  create a .env file using env vars loaded from a script or existing .env files
+  run a given command with loaded env variables
 
 EXAMPLES
-  Create .env file with env variables returned from script
+  Run command with env variables returned from script
 
-    $ envtk create ".env" -s ./load-env.js
+    $ envtk run "npm run dev" -s ./load-env.js
 
-  Create .env file with env variables returned from script and include defaults from ".defaults.env"
+  Run command with env variables returned from script and include defaults from ".env"
 
-    $ envtk create ".env" -s ./load-env.js -e .defaults.env
+    $ envtk run "npm run dev" -s ./load-env.js -e .env
 ```
 
-_See code: [dist/commands/create.ts](https://github.com/Fatih-Ertikin/envtk/blob/v0.0.0-development/dist/commands/create.ts)_
-
-## `envtk help [COMMANDS]`
-
-Display help for envtk.
-
-```
-USAGE
-  $ envtk help [COMMANDS] [-n]
-
-ARGUMENTS
-  COMMANDS  Command to show help for.
-
-FLAGS
-  -n, --nested-commands  Include all nested commands in the output.
-
-DESCRIPTION
-  Display help for envtk.
-```
-
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.9/src/commands/help.ts)_
+_See code: [dist/commands/run.ts](https://github.com/Fatih-Ertikin/envtk/blob/v2.0.2/dist/commands/run.ts)_
+<!-- commandsstop -->
