@@ -83,7 +83,7 @@ $ npm install -g envtk
 $ envtk COMMAND
 running command...
 $ envtk (--version)
-envtk/2.0.2 linux-x64 node-v18.16.0
+envtk/2.0.3 linux-x64 node-v18.16.0
 $ envtk --help [COMMAND]
 USAGE
   $ envtk COMMAND
@@ -94,42 +94,7 @@ USAGE
   # Commands
 
   <!-- commands -->
-* [`envtk create OUTPUT`](#envtk-create-output)
 * [`envtk help [COMMANDS]`](#envtk-help-commands)
-* [`envtk run COMMAND`](#envtk-run-command)
-
-## `envtk create OUTPUT`
-
-create a .env file using env vars loaded from a script or existing .env files
-
-```
-USAGE
-  $ envtk create OUTPUT [--json] [-s <value>] [-e <value>]
-
-ARGUMENTS
-  OUTPUT  path for the output file
-
-FLAGS
-  -e, --envFile=<value>  path to .env file with defaults to include
-  -s, --script=<value>   path to .(mjs|js) script.
-
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  create a .env file using env vars loaded from a script or existing .env files
-
-EXAMPLES
-  Create .env file with env variables returned from script
-
-    $ envtk create ".env" -s ./load-env.js
-
-  Create .env file with env variables returned from script and include defaults from ".defaults.env"
-
-    $ envtk create ".env" -s ./load-env.js -e .defaults.env
-```
-
-_See code: [dist/commands/create.ts](https://github.com/Fatih-Ertikin/envtk/blob/v2.0.2/dist/commands/create.ts)_
 
 ## `envtk help [COMMANDS]`
 
@@ -150,37 +115,4 @@ DESCRIPTION
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.10/src/commands/help.ts)_
-
-## `envtk run COMMAND`
-
-run a given command with loaded env variables
-
-```
-USAGE
-  $ envtk run COMMAND [--json] [-s <value>] [-e <value>]
-
-ARGUMENTS
-  COMMAND  command to run with the loaded environment variables
-
-FLAGS
-  -e, --envFile=<value>  path to .env file with defaults to include
-  -s, --script=<value>   path to .(mjs|js) script.
-
-GLOBAL FLAGS
-  --json  Format output as json.
-
-DESCRIPTION
-  run a given command with loaded env variables
-
-EXAMPLES
-  Run command with env variables returned from script
-
-    $ envtk run "npm run dev" -s ./load-env.js
-
-  Run command with env variables returned from script and include defaults from ".env"
-
-    $ envtk run "npm run dev" -s ./load-env.js -e .env
-```
-
-_See code: [dist/commands/run.ts](https://github.com/Fatih-Ertikin/envtk/blob/v2.0.2/dist/commands/run.ts)_
 <!-- commandsstop -->
