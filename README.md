@@ -83,7 +83,7 @@ $ npm install -g envtk
 $ envtk COMMAND
 running command...
 $ envtk (--version)
-envtk/2.0.3 linux-x64 node-v18.16.0
+envtk/2.0.4 linux-x64 node-v18.16.1
 $ envtk --help [COMMAND]
 USAGE
   $ envtk COMMAND
