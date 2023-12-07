@@ -83,7 +83,7 @@ $ npm install -g envtk
 $ envtk COMMAND
 running command...
 $ envtk (--version)
-envtk/2.0.7 linux-x64 node-v18.18.0
+envtk/2.0.8 linux-x64 node-v18.18.2
 $ envtk --help [COMMAND]
 USAGE
   $ envtk COMMAND
@@ -114,5 +114,5 @@ DESCRIPTION
   Display help for envtk.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.14/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.2.20/src/commands/help.ts)_
 <!-- commandsstop -->
